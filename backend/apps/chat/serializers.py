@@ -1,20 +1,32 @@
+import mimetypes
+
 from PIL import Image, UnidentifiedImageError
 from rest_framework import serializers
 
 from apps.accounts.models import StudentProfile
 from .models import ChatGroup, ChatMessage
 
+MAX_ATTACHMENT_SIZE = 20 * 1024 * 1024
+
 
 class ChatMessageCreateSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=False, allow_blank=True, trim_whitespace=True)
     image = serializers.ImageField(required=False, allow_null=True)
+    attachment = serializers.FileField(required=False, allow_null=True)
 
     class Meta:
         model = ChatMessage
-        fields = ("id", "text", "image")
+        fields = ("id", "text", "image", "attachment")
         read_only_fields = ("id",)
 
+    def validate_attachment(self, attachment):
+        if attachment.size > MAX_ATTACHMENT_SIZE:
+            raise serializers.ValidationError("Файл занадто великий.")
+        return attachment
+
     def validate_image(self, image):
+        if image.size > MAX_ATTACHMENT_SIZE:
+            raise serializers.ValidationError("Зображення занадто велике.")
         if image.size < 1024:
             raise serializers.ValidationError("Зображення занадто маленьке.")
 
@@ -37,8 +49,9 @@ class ChatMessageCreateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         text = attrs.get("text", "").strip()
         image = attrs.get("image")
-        if not text and image is None:
-            raise serializers.ValidationError("Напишіть текст або додайте зображення.")
+        attachment = attrs.get("attachment")
+        if not text and image is None and attachment is None:
+            raise serializers.ValidationError("Напишіть текст або додайте файл.")
         return attrs
 
 
@@ -116,10 +129,24 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     sender_email = serializers.EmailField(source="sender.email", read_only=True, allow_null=True)
     sender_name = serializers.SerializerMethodField()
     image_url = serializers.SerializerMethodField()
+    attachment_url = serializers.SerializerMethodField()
+    attachment_name = serializers.SerializerMethodField()
+    attachment_is_image = serializers.SerializerMethodField()
 
     class Meta:
         model = ChatMessage
-        fields = ("id", "text", "sender_email", "sender_name", "image_url", "is_system", "created_at")
+        fields = (
+            "id",
+            "text",
+            "sender_email",
+            "sender_name",
+            "image_url",
+            "attachment_url",
+            "attachment_name",
+            "attachment_is_image",
+            "is_system",
+            "created_at",
+        )
 
     def get_sender_name(self, obj):
         if obj.sender is None:
@@ -133,6 +160,23 @@ class ChatMessageSerializer(serializers.ModelSerializer):
             return None
         request = self.context.get("request")
         return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+
+    def get_attachment_url(self, obj):
+        if not obj.attachment:
+            return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.attachment.url) if request else obj.attachment.url
+
+    def get_attachment_name(self, obj):
+        if not obj.attachment:
+            return None
+        return obj.attachment.name.split("/")[-1]
+
+    def get_attachment_is_image(self, obj):
+        if not obj.attachment:
+            return False
+        mime_type, _encoding = mimetypes.guess_type(obj.attachment.name)
+        return bool(mime_type and mime_type.startswith("image/"))
 
 
 class ChatUserSerializer(serializers.ModelSerializer):

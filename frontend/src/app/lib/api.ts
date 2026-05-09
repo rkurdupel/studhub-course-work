@@ -97,6 +97,9 @@ export interface ChatMessage {
   sender_email: string | null;
   sender_name: string | null;
   image_url: string | null;
+  attachment_url: string | null;
+  attachment_name: string | null;
+  attachment_is_image: boolean;
   is_system: boolean;
   created_at: string;
 }
@@ -276,15 +279,24 @@ export function postChatMessage(token: string, groupId: string, text: string) {
   });
 }
 
-export function postChatMessageWithImage(token: string, groupId: string, text: string, image: File) {
+export function postChatMessageWithAttachment(
+  token: string,
+  groupId: string,
+  text: string,
+  attachment: File
+) {
   const formData = new FormData();
   formData.append("text", text);
-  formData.append("image", image);
+  formData.append("attachment", attachment);
   return request<ChatMessage>(`/api/chat/groups/${groupId}/messages/`, {
     method: "POST",
     token,
     body: formData,
   });
+}
+
+export function postChatMessageWithImage(token: string, groupId: string, text: string, image: File) {
+  return postChatMessageWithAttachment(token, groupId, text, image);
 }
 
 export function buildMediaUrl(path: string) {

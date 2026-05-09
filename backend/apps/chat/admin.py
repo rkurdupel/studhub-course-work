@@ -5,8 +5,8 @@ from .models import ChatGroup, ChatMessage, Reminder
 
 @admin.register(Reminder)
 class ReminderAdmin(admin.ModelAdmin):
-    fields = ("text", "image", "created_at")
-    list_display = ("short_text", "created_at", "has_image")
+    fields = ("text", "image", "attachment", "created_at")
+    list_display = ("short_text", "created_at", "has_attachment")
     readonly_fields = ("created_at",)
     search_fields = ("text",)
     ordering = ("-created_at",)
@@ -46,14 +46,14 @@ class ReminderAdmin(admin.ModelAdmin):
         return f"{obj.text[:77]}..."
 
     @admin.display(boolean=True, description="Image")
-    def has_image(self, obj):
-        return bool(obj.image)
+    def has_attachment(self, obj):
+        return bool(obj.image or obj.attachment)
 
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    fields = ("group", "text", "image", "created_at")
-    list_display = ("group", "short_text", "created_at", "has_image")
+    fields = ("group", "text", "image", "attachment", "created_at")
+    list_display = ("group", "short_text", "created_at", "has_attachment")
     list_filter = ("group",)
     readonly_fields = ("created_at",)
     search_fields = ("text", "group__display_name", "group__code")
@@ -80,5 +80,5 @@ class ChatMessageAdmin(admin.ModelAdmin):
         return f"{obj.text[:77]}..."
 
     @admin.display(boolean=True, description="Image")
-    def has_image(self, obj):
-        return bool(obj.image)
+    def has_attachment(self, obj):
+        return bool(obj.image or obj.attachment)

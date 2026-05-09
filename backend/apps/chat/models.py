@@ -53,6 +53,7 @@ class ChatMessage(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField(blank=True)
     image = models.FileField(upload_to="chat_images/", blank=True, null=True)
+    attachment = models.FileField(upload_to="chat_files/", blank=True, null=True)
     is_system = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

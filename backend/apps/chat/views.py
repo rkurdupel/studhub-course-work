@@ -110,6 +110,7 @@ class ChatMessageView(MembershipRequiredMixin, APIView):
             sender=request.user,
             text=serializer.validated_data.get("text", ""),
             image=serializer.validated_data.get("image"),
+            attachment=serializer.validated_data.get("attachment"),
         )
         return Response(
             ChatMessageSerializer(message, context={"request": request}).data,

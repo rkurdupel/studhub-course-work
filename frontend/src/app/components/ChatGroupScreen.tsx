@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { ArrowLeft, Send, Image as ImageIcon, AlertCircle } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, AlertCircle, Download, FileText } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { UserProfileModal } from "./UserProfileModal";
 import {
   fetchChatGroups,
   fetchChatMessages,
   postChatMessage,
-  postChatMessageWithImage,
+  postChatMessageWithAttachment,
   type ChatGroup,
   type ChatMessage,
 } from "../lib/api";
@@ -19,8 +19,9 @@ export function ChatGroupScreen() {
   const [groups, setGroups] = useState<ChatGroup[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [selectedAttachmentPreview, setSelectedAttachmentPreview] = useState<string | null>(null);
+  const [selectedAttachmentFile, setSelectedAttachmentFile] = useState<File | null>(null);
+  const [selectedAttachmentName, setSelectedAttachmentName] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<{ name: string; course: string; specialization: string } | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -65,18 +66,19 @@ export function ChatGroupScreen() {
   const isRemindersChat = activeGroup?.group_type === "reminders";
 
   const handleSend = async () => {
-    if (isSending || ((!newMessage.trim() && !selectedImageFile) || !accessToken || !groupId)) return;
+    if (isSending || ((!newMessage.trim() && !selectedAttachmentFile) || !accessToken || !groupId)) return;
     const messageText = newMessage.trim();
     setIsSending(true);
     setSendError(null);
     try {
-      const created = selectedImageFile
-        ? await postChatMessageWithImage(accessToken, groupId, messageText, selectedImageFile)
+      const created = selectedAttachmentFile
+        ? await postChatMessageWithAttachment(accessToken, groupId, messageText, selectedAttachmentFile)
         : await postChatMessage(accessToken, groupId, messageText);
       setMessages((prev) => [...prev, created]);
       setNewMessage("");
-      setSelectedImage(null);
-      setSelectedImageFile(null);
+      setSelectedAttachmentPreview(null);
+      setSelectedAttachmentFile(null);
+      setSelectedAttachmentName(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -91,12 +93,17 @@ export function ChatGroupScreen() {
     const file = e.target.files?.[0];
     if (file) {
       setSendError(null);
-      setSelectedImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setSelectedAttachmentFile(file);
+      setSelectedAttachmentName(file.name);
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setSelectedAttachmentPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setSelectedAttachmentPreview(null);
+      }
     }
   };
 
@@ -167,6 +174,25 @@ export function ChatGroupScreen() {
                     className="mt-2 rounded-lg max-w-full h-auto"
                   />
                 )}
+                {!message.image_url && message.attachment_url && message.attachment_is_image && (
+                  <img
+                    src={message.attachment_url}
+                    alt={message.attachment_name ?? "Вкладення"}
+                    className="mt-2 rounded-lg max-w-full h-auto"
+                  />
+                )}
+                {!message.image_url && message.attachment_url && !message.attachment_is_image && (
+                  <a
+                    href={message.attachment_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <FileText size={16} />
+                    {message.attachment_name ?? "Файл"}
+                    <Download size={14} />
+                  </a>
+                )}
               </div>
             ))}
           </div>
@@ -175,17 +201,25 @@ export function ChatGroupScreen() {
           {!isRemindersChat && (
           <div className="bg-white border-t border-gray-200 p-4 fixed bottom-0 left-0 right-0">
             <div className="max-w-md mx-auto">
-              {selectedImage && (
+              {selectedAttachmentFile && (
                 <div className="mb-2 relative inline-block">
-                  <img
-                    src={selectedImage}
-                    alt="Preview"
-                    className="h-20 rounded border border-gray-200"
-                  />
+                  {selectedAttachmentPreview ? (
+                    <img
+                      src={selectedAttachmentPreview}
+                      alt="Preview"
+                      className="h-20 rounded border border-gray-200"
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2 rounded border border-gray-200 px-3 py-2 text-sm text-gray-700">
+                      <Paperclip size={16} />
+                      <span className="max-w-48 truncate">{selectedAttachmentName}</span>
+                    </div>
+                  )}
                   <button
                     onClick={() => {
-                      setSelectedImage(null);
-                      setSelectedImageFile(null);
+                      setSelectedAttachmentPreview(null);
+                      setSelectedAttachmentFile(null);
+                      setSelectedAttachmentName(null);
                     }}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
                   >
@@ -198,7 +232,7 @@ export function ChatGroupScreen() {
                   type="file"
                   ref={fileInputRef}
                   onChange={handleImageSelect}
-                  accept="image/*"
+                  accept="*/*"
                   className="hidden"
                 />
                 <button
@@ -206,7 +240,7 @@ export function ChatGroupScreen() {
                   disabled={isSending}
                   className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <ImageIcon size={20} className="text-gray-600" />
+                  <Paperclip size={20} className="text-gray-600" />
                 </button>
                 <input
                   type="text"
@@ -218,7 +252,7 @@ export function ChatGroupScreen() {
                 />
                 <button
                   onClick={handleSend}
-                  disabled={isSending || (!newMessage.trim() && !selectedImage)}
+                  disabled={isSending || (!newMessage.trim() && !selectedAttachmentFile)}
                   className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   <Send size={18} />
