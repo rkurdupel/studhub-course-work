@@ -1,0 +1,19 @@
+version: 1.0
+runtime: python3
+
+build:
+  commands:
+    build:
+      - pip install -r requirements.txt
+
+run:
+  runtime-version: 3.12
+  command: >
+    sh -c "python manage.py migrate &&
+    python manage.py seed_subjects &&
+    python manage.py seed_chat_groups &&
+    python manage.py seed_payment_requisites &&
+    gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+  network:
+    port: 8000
+    env: PORT
