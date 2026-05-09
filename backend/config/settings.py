@@ -70,9 +70,15 @@ def get_cors_allowed_origins() -> list[str]:
     return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
 
 
+def get_csrf_trusted_origins() -> list[str]:
+    raw_origins = runtime_env("DJANGO_CSRF_TRUSTED_ORIGINS", "")
+    return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
+
 SECRET_KEY = get_secret_key()
 ALLOWED_HOSTS = get_allowed_hosts()
 CORS_ALLOWED_ORIGINS = get_cors_allowed_origins()
+CSRF_TRUSTED_ORIGINS = get_csrf_trusted_origins()
 
 INSTALLED_APPS = [
     "django.contrib.admin",
