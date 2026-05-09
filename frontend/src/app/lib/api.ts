@@ -168,6 +168,37 @@ async function request<T>(
   return data as T;
 }
 
+export async function downloadFile(token: string, path: string, filename: string) {
+  const response = await fetch(getUrl(path), {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const contentType = response.headers.get("content-type") ?? "";
+    const data = contentType.includes("application/json")
+      ? await response.json()
+      : await response.text();
+    const message =
+      typeof data === "object" && data !== null && "detail" in data
+        ? String((data as { detail: unknown }).detail)
+        : `Request failed with status ${response.status}`;
+    throw new ApiError(message, response.status, data);
+  }
+
+  const blob = await response.blob();
+  const objectUrl = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(objectUrl);
+}
+
 export function fetchProfile(token: string) {
   return request<ApiProfile>("/api/auth/me/", { method: "GET", token });
 }

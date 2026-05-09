@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router";
 import { ArrowLeft, FileText, Download } from "lucide-react";
 import {
   buildMediaUrl,
+  downloadFile,
   fetchSubjectMaterials,
   fetchSubjects,
-  getSubjectMaterialDownloadUrl,
   type SubjectMaterial,
 } from "../lib/api";
 import { useUser } from "../context/UserContext";
@@ -43,6 +43,23 @@ export function SubjectScreen() {
     window.open(buildMediaUrl(path), "_blank", "noopener,noreferrer");
   };
 
+  const handleDownload = async (material: SubjectMaterial) => {
+    if (!accessToken) {
+      setError("Потрібно увійти в акаунт.");
+      return;
+    }
+    try {
+      setError(null);
+      await downloadFile(
+        accessToken,
+        `/api/subjects/materials/${material.id}/download/`,
+        material.original_filename || `${material.title}.bin`
+      );
+    } catch {
+      setError("Не вдалося завантажити файл.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-md mx-auto p-4">
@@ -73,7 +90,11 @@ export function SubjectScreen() {
               </div>
               <div className="flex gap-2">
                 <a
-                  href={getSubjectMaterialDownloadUrl(file.id)}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void handleDownload(file);
+                  }}
                   className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
                 >
                   <Download size={16} />
