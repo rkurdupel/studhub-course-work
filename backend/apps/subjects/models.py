@@ -8,8 +8,8 @@ class Subject(models.Model):
 
     class Meta:
         ordering = ("sort_order", "name")
-        verbose_name = "Subject"
-        verbose_name_plural = "Subjects"
+        verbose_name = "Предмет"
+        verbose_name_plural = "Предмети"
 
     def __str__(self):
         return self.name
@@ -25,8 +25,8 @@ class SubjectMaterial(models.Model):
 
     class Meta:
         ordering = ("-uploaded_at", "-id")
-        verbose_name = "Subject material"
-        verbose_name_plural = "Subject materials"
+        verbose_name = "Матеріал предмета"
+        verbose_name_plural = "Матеріали предметів"
 
     def save(self, *args, **kwargs):
         if self.file:

@@ -4,12 +4,12 @@ from apps.subjects.models import Subject
 
 
 SUBJECTS = [
-    ("math", "Higher Mathematics"),
-    ("physics", "Physics"),
-    ("programming", "Programming"),
-    ("algorithms", "Algorithms"),
-    ("databases", "Databases"),
-    ("networks", "Computer Networks"),
+    ("math", "Вища математика"),
+    ("physics", "Фізика"),
+    ("programming", "Програмування"),
+    ("algorithms", "Алгоритми"),
+    ("databases", "Бази даних"),
+    ("networks", "Комп'ютерні мережі"),
 ]
 
 
@@ -22,4 +22,3 @@ class Command(BaseCommand):
                 slug=slug,
                 defaults={"name": name, "sort_order": index},
             )
-

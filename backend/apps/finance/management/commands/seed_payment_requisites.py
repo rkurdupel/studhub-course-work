@@ -10,9 +10,9 @@ class Command(BaseCommand):
         PaymentRequisites.objects.update_or_create(
             is_active=True,
             defaults={
-                "receiver_name": "University Treasury",
-                "iban": "UA123456789012345678901234567",
-                "edrpou": "12345678",
+                "receiver_name": "Львівська Політехніка",
+                "iban": "UA388201720313241002201001057",
+                "edrpou": "02071010",
             },
         )
 

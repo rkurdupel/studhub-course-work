@@ -46,7 +46,7 @@ export function FinancesScreen() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl mb-6">Фінанси</h1>
 
         {isBudget ? (
@@ -140,26 +140,17 @@ export function FinancesScreen() {
                 <div className="space-y-3 text-sm">
                   <div>
                     <p className="text-gray-600 mb-1">Отримувач:</p>
-                    <p className="font-medium">
-                      {finance?.payment_requisites.receiver_name}
-                    </p>
+                    <p className="font-medium">Львівська Політехніка</p>
                   </div>
                   <div>
                     <p className="text-gray-600 mb-1">IBAN:</p>
                     <p className="font-mono font-medium text-xs break-all">
-                      {finance?.payment_requisites.iban}
+                      UA388201720313241002201001057
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-600 mb-1">ЄДРПОУ:</p>
-                    <p className="font-medium">{finance?.payment_requisites.edrpou}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 mb-1">Призначення платежу:</p>
-                    <p className="font-medium">
-                      Оплата за навчання, {user.name}, {user.course} курс,{" "}
-                      {user.specialization}
-                    </p>
+                    <p className="font-medium">02071010</p>
                   </div>
                   <div className="bg-yellow-50 rounded p-3 mt-3">
                     <p className="text-xs text-gray-700">
@@ -167,6 +158,36 @@ export function FinancesScreen() {
                       призначення платежу для коректного зарахування коштів.
                     </p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {showRequisites && (
+              <div className="bg-white rounded-lg p-4 border border-gray-200">
+                <h3 className="font-semibold mb-4">Блок для оплати</h3>
+                <div className="space-y-4 text-sm text-gray-800">
+                  <div className="rounded-lg bg-gray-50 p-4 border border-gray-200">
+                    <div className="whitespace-pre-wrap leading-6">
+                      {`Оплата за навчання
+Реквізити для оплати за навчання:
+
+Отримувач платежу: Львівська Політехніка
+
+Р/р: UA388201720313241002201001057
+
+ЄДРПОУ 02071010
+
+Оплата за навчання ___________________________
+                                    (прізвище, ініціали Студента)
+
+________________________                          Платник   __________________
+
+ (інститут скор.) (спец.скор)                     (прізвище, ініціали Замовника)`}
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 rounded p-3 text-xs text-blue-900">
+                    Дані в блоці можна скопіювати у квитанцію або використати як шаблон для оплати.
+                  </div>    
                 </div>
               </div>
             )}
