@@ -37,21 +37,28 @@ export function FinancesScreen() {
   const isBudget = finance?.funding_type === "budget";
 
   if (!finance && !error) {
-    return <div className="min-h-screen bg-gray-50 p-4"><div className="max-w-md mx-auto">Завантаження...</div></div>;
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-md mx-auto">Завантаження...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="min-h-screen bg-gray-50 p-4"><div className="max-w-md mx-auto text-red-600">{error}</div></div>;
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-md mx-auto text-red-600">{error}</div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-md mx-auto">
         <h1 className="text-2xl mb-6">Фінанси</h1>
 
         {isBudget ? (
           <div className="space-y-4">
-            {/* Type Card */}
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -64,7 +71,6 @@ export function FinancesScreen() {
               </div>
             </div>
 
-            {/* Scholarship Info */}
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <h3 className="font-semibold mb-4">Інформація про стипендію</h3>
               <div className="space-y-3">
@@ -81,7 +87,6 @@ export function FinancesScreen() {
               </div>
             </div>
 
-            {/* Next Payment Date */}
             <div className="bg-green-50 rounded-lg p-4 border border-green-200">
               <div className="flex items-start gap-3">
                 <Calendar className="text-green-600 mt-1" size={20} />
@@ -96,7 +101,6 @@ export function FinancesScreen() {
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Type Card */}
             <div className="bg-white rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -109,7 +113,6 @@ export function FinancesScreen() {
               </div>
             </div>
 
-            {/* Payment Reminder */}
             <div className="bg-red-50 rounded-lg p-4 border border-red-200">
               <div className="flex items-start gap-3">
                 <AlertCircle className="text-red-600 mt-1" size={20} />
@@ -124,7 +127,6 @@ export function FinancesScreen() {
               </div>
             </div>
 
-            {/* Requisites Button */}
             <button
               onClick={() => setShowRequisites(!showRequisites)}
               className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
@@ -133,7 +135,6 @@ export function FinancesScreen() {
               {showRequisites ? "Приховати реквізити" : "Переглянути реквізити"}
             </button>
 
-            {/* Requisites Details */}
             {showRequisites && (
               <div className="bg-white rounded-lg p-4 border border-gray-200">
                 <h3 className="font-semibold mb-4">Реквізити для оплати</h3>
@@ -152,6 +153,13 @@ export function FinancesScreen() {
                     <p className="text-gray-600 mb-1">ЄДРПОУ:</p>
                     <p className="font-medium">02071010</p>
                   </div>
+                  <div>
+                    <p className="text-gray-600 mb-1">Призначення платежу:</p>
+                    <p className="font-medium">
+                      Оплата за навчання, {user.name}, {user.course} курс,{" "}
+                      {user.specialization}
+                    </p>
+                  </div>
                   <div className="bg-yellow-50 rounded p-3 mt-3">
                     <p className="text-xs text-gray-700">
                       <strong>Важливо:</strong> Обов'язково вказуйте правильне
@@ -167,27 +175,61 @@ export function FinancesScreen() {
                 <h3 className="font-semibold mb-4">Блок для оплати</h3>
                 <div className="space-y-4 text-sm text-gray-800">
                   <div className="rounded-lg bg-gray-50 p-4 border border-gray-200">
-                    <div className="whitespace-pre-wrap leading-6">
-                      {`Оплата за навчання
-Реквізити для оплати за навчання:
+                    <div className="space-y-4 leading-6">
+                      <div className="text-base font-semibold text-gray-900">
+                        Оплата за навчання
+                      </div>
+                      <div className="text-sm text-gray-700">
+                        Реквізити для оплати за навчання:
+                      </div>
 
-Отримувач платежу: Львівська Політехніка
+                      <div className="space-y-3">
+                        <div className="grid gap-1">
+                          <span className="text-gray-600">Отримувач платежу:</span>
+                          <span className="font-medium">Львівська Політехніка</span>
+                        </div>
+                        <div className="grid gap-1">
+                          <span className="text-gray-600">Р/р:</span>
+                          <span className="font-mono break-all font-medium">
+                            UA388201720313241002201001057
+                          </span>
+                        </div>
+                        <div className="grid gap-1">
+                          <span className="text-gray-600">ЄДРПОУ:</span>
+                          <span className="font-medium">02071010</span>
+                        </div>
+                      </div>
 
-Р/р: UA388201720313241002201001057
+                      <div className="pt-2 space-y-3">
+                        <div className="grid gap-1">
+                          <span className="text-gray-600">Оплата за навчання</span>
+                          <span className="border-b border-gray-400 min-h-6"></span>
+                          <span className="text-xs text-gray-500">
+                            (прізвище, ініціали Студента)
+                          </span>
+                        </div>
 
-ЄДРПОУ 02071010
-
-Оплата за навчання ___________________________
-                                    (прізвище, ініціали Студента)
-
-________________________                          Платник   __________________
-
- (інститут скор.) (спец.скор)                     (прізвище, ініціали Замовника)`}
+                        <div className="grid gap-2">
+                          <div className="grid gap-1">
+                            <span className="text-gray-600">(інститут скор.) (спец.скор)</span>
+                            <span className="border-b border-gray-400 min-h-6"></span>
+                          </div>
+                 
+                          <div className="grid gap-1">
+                            <span className="text-gray-600">Платник</span>
+                            <span className="border-b border-gray-400 min-h-6"></span>
+                            <span className="text-xs text-gray-500">
+                              (прізвище, ініціали Замовника)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
+
                   <div className="bg-blue-50 rounded p-3 text-xs text-blue-900">
                     Дані в блоці можна скопіювати у квитанцію або використати як шаблон для оплати.
-                  </div>    
+                  </div>
                 </div>
               </div>
             )}
