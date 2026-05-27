@@ -12,7 +12,7 @@ DEFAULT_GROUPS = [
     },
     {
         "code": "reminders",
-        "display_name": "Reminders",
+        "display_name": "Announcements",
         "group_type": ChatGroup.GROUP_TYPE_REMINDERS,
         "is_read_only": True,
     },

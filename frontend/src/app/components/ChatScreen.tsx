@@ -50,7 +50,7 @@ export function ChatScreen() {
                 </div>
                 <div>
                   <h3 className="font-medium mb-1">{remindersGroup.display_name}</h3>
-                  <p className="text-sm text-gray-500">Важливі повідомлення</p>
+                  <p className="text-sm text-gray-500">Оголошення</p>
                 </div>
               </div>
             </button>

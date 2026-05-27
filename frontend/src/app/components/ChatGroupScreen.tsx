@@ -130,7 +130,7 @@ export function ChatGroupScreen() {
             </button>
             <h1 className="text-xl">{groupName}</h1>
             {isRemindersChat && (
-              <p className="text-sm text-gray-500 mt-1">Важливі повідомлення від системи</p>
+              <p className="text-sm text-gray-500 mt-1">Оголошення від системи</p>
             )}
           </div>
         </div>

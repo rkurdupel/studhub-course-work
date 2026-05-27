@@ -19,17 +19,17 @@ class ReminderAdmin(admin.ModelAdmin):
         group, _created = ChatGroup.objects.get_or_create(
             code="reminders",
             defaults={
-                "display_name": "Reminders",
+                "display_name": "Announcements",
                 "group_type": ChatGroup.GROUP_TYPE_REMINDERS,
                 "is_read_only": True,
             },
         )
         if (
-            group.display_name != "Reminders"
+            group.display_name != "Announcements"
             or group.group_type != ChatGroup.GROUP_TYPE_REMINDERS
             or not group.is_read_only
         ):
-            group.display_name = "Reminders"
+            group.display_name = "Announcements"
             group.group_type = ChatGroup.GROUP_TYPE_REMINDERS
             group.is_read_only = True
             group.save(update_fields=("display_name", "group_type", "is_read_only"))
