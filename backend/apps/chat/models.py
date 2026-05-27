@@ -67,5 +67,5 @@ class ChatMessage(models.Model):
 class Reminder(ChatMessage):
     class Meta:
         proxy = True
-        verbose_name = "Reminder"
-        verbose_name_plural = "Reminders"
+        verbose_name = "Announcements"
+        verbose_name_plural = "Announcements"
