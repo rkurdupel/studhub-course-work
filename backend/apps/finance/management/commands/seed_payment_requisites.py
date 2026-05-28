@@ -4,7 +4,7 @@ from apps.finance.models import PaymentRequisites
 
 
 class Command(BaseCommand):
-    help = "Create or update the default payment requisites for demo paid students."
+    help = "Create or update the default payment requisites for demo paid students"
 
     def handle(self, *args, **kwargs):
         PaymentRequisites.objects.update_or_create(

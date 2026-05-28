@@ -64,13 +64,6 @@ export function UserProfileModal({ user, onClose }: UserProfileModalProps) {
           </div>
         </div>
 
-        <button
-          onClick={handleStartChat}
-          className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-        >
-          <MessageCircle size={20} />
-          Написати
-        </button>
       </div>
     </div>
   );

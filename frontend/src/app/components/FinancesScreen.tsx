@@ -198,8 +198,6 @@ export function FinancesScreen() {
               </div>
             </div>
 
-            <RequisitesBlock user={user} />
-            <PaymentBlock />
           </div>
         ) : (
           <div className="space-y-4">
