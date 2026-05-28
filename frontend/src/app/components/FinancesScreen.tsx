@@ -219,7 +219,7 @@ export function FinancesScreen() {
               <div>
                 <p className="font-medium text-red-900 mb-1">Нагадування про оплату</p>
                 <p className="text-red-700 text-sm mb-1">
-                  Поточний борг: <span className="font-medium">21550 грн</span>
+                  Поточний борг: <span className="font-medium">5000 грн</span>
                 </p>
                 <p className="text-red-700 text-sm">
                   Дедлайн оплати:{" "}
